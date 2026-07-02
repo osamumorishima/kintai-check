@@ -1,0 +1,21 @@
+バクラクの日次申請を自動承認する（Stage 1）。
+
+インターン生が日次申請を出したタイミングで実行する。月次申請には触らない。
+
+以下を順番に実行してください。
+
+1. approve_daily.py をバックグラウンドで起動する：
+```bash
+cd /Users/info/Documents/projects/kintai-check && nohup ../customer-dashboard/.venv/bin/python3 -u approve_daily.py > /tmp/kintai_daily.log 2>&1 &
+```
+
+2. 10秒待ってからログを確認する：
+```bash
+sleep 10 && cat /tmp/kintai_daily.log
+```
+
+3. ログに「ログイン済み」が出たら処理が進んでいる。「未ログイン」が出た場合はブラウザが開いているのでGoogleアカウントでログインするようユーザーに伝える。
+
+4. 完了まで30秒おきにログを確認し、以下のどちらかが出たら結果をユーザーに報告する：
+   - `日次承認: ✅ 完了`
+   - `日次承認: ⬛ なし（0件）`

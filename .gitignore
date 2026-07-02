@@ -1,0 +1,9 @@
+.env
+bakuraku_session.json
+browser_profile/
+out/
+.venv/
+__pycache__/
+*.pyc
+*.log
+.dev-lock

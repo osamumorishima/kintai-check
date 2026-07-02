@@ -1,0 +1,51 @@
+バクラク月次申請の突合・承認を行う（Stage 2）。
+
+インターン生が月次申請を出したタイミングで実行する（日次申請の承認・経理W承認が完了した後）。
+
+以下を順番に実行してください。
+
+---
+
+## Step 1: 突合スクリプトを実行する
+
+```bash
+cd /Users/info/Documents/projects/kintai-check && ../customer-dashboard/.venv/bin/python3 -u reconcile.py 2>&1 | tee /tmp/kintai_reconcile.log; echo "EXIT:$?"
+```
+
+出力の最後に `EXIT:0`（全一致）または `EXIT:1`（不一致）が出る。
+
+---
+
+## Step 2: 結果に応じて分岐する
+
+### 全一致の場合（EXIT:0）
+
+「✅ 全一致 → 月次申請を自動承認します」とユーザーに伝え、直ちに Step 3 へ進む。
+
+### 不一致ありの場合（EXIT:1）
+
+ログに出力された `file:///...reconcile_YYYY-MM.html` のパスをユーザーに提示し、以下のメッセージを表示する：
+
+```
+❌ 不一致が検出されました。
+HTMLレポートを確認してください：
+  file:///[ログに出たパス]
+
+内容を確認して問題がなければ「問題なし」と入力してください。
+問題がある場合は修正内容を教えてください。
+```
+
+ユーザーが「問題なし」と返答したら Step 3 へ進む。
+それ以外の返答（修正依頼など）があれば、ユーザーの指示に従って対応する。
+
+---
+
+## Step 3: 月次申請を承認する
+
+```bash
+cd /Users/info/Documents/projects/kintai-check && nohup ../customer-dashboard/.venv/bin/python3 -u approve_monthly.py > /tmp/kintai_monthly.log 2>&1 &
+```
+
+30秒おきにログを確認し、以下が出たら結果をユーザーに報告する：
+- `月次承認: ✅ 完了`
+- `月次承認: ⬛ なし（0件）`
