@@ -9,7 +9,7 @@
 ## Step 1: 突合スクリプトを実行する
 
 ```bash
-cd /Users/info/Documents/projects/kintai-check && ../customer-dashboard/.venv/bin/python3 -u reconcile.py 2>&1 | tee /tmp/kintai_reconcile.log; echo "EXIT:$?"
+.venv/bin/python3 -u reconcile.py 2>&1 | tee /tmp/kintai_reconcile.log; echo "EXIT:$?"
 ```
 
 出力の最後に `EXIT:0`（全一致）または `EXIT:1`（不一致）が出る。
@@ -43,7 +43,7 @@ HTMLレポートを確認してください：
 ## Step 3: 月次申請を承認する
 
 ```bash
-cd /Users/info/Documents/projects/kintai-check && nohup ../customer-dashboard/.venv/bin/python3 -u approve_monthly.py > /tmp/kintai_monthly.log 2>&1 &
+nohup .venv/bin/python3 -u approve_monthly.py > /tmp/kintai_monthly.log 2>&1 &
 ```
 
 30秒おきにログを確認し、以下が出たら結果をユーザーに報告する：

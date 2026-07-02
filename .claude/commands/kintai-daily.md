@@ -6,7 +6,7 @@
 
 1. approve_daily.py をバックグラウンドで起動する：
 ```bash
-cd /Users/info/Documents/projects/kintai-check && nohup ../customer-dashboard/.venv/bin/python3 -u approve_daily.py > /tmp/kintai_daily.log 2>&1 &
+nohup .venv/bin/python3 -u approve_daily.py > /tmp/kintai_daily.log 2>&1 &
 ```
 
 2. 10秒待ってからログを確認する：

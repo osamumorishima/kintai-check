@@ -37,10 +37,10 @@ out/                   - スクリーンショット・HTMLレポート（.gitig
 ## 実行方法
 
 ```bash
-# 仮想環境は customer-dashboard の .venv を共用
-../customer-dashboard/.venv/bin/python3 approve_daily.py
-../customer-dashboard/.venv/bin/python3 reconcile.py [--month 2026-06]
-../customer-dashboard/.venv/bin/python3 approve_monthly.py
+# ローカル仮想環境を使用（初回セットアップ後）
+.venv/bin/python3 approve_daily.py
+.venv/bin/python3 reconcile.py [--month 2026-06]
+.venv/bin/python3 approve_monthly.py
 ```
 
 ## バクラク技術仕様（実機調査済み）
@@ -73,79 +73,6 @@ out/                   - スクリーンショット・HTMLレポート（.gitig
 
 ---
 
-## GitHub PR 手順（準備完了状態）
+## リポジトリ
 
-### 前提確認チェックリスト
-
-- [ ] `reconcile.py` 実機テスト完了（月次申請が来たタイミングで実施）
-- [ ] `test_members.py` を削除（テスト用・PR不要）
-- [ ] `approve.md`（旧コマンド）を削除: `rm .claude/commands/approve.md`
-
-### Step 1: GitHub CLI ログイン（未ログインの場合のみ）
-
-```bash
-gh auth login
-# → GitHub.com → SSH → Authenticate Git with credentials → ブラウザで認証
-```
-
-### Step 2: git 初期化・初回コミット
-
-```bash
-cd /Users/info/Documents/projects/kintai-check
-git init
-git add intern_config.py approve_daily.py approve_monthly.py approve.py reconcile.py
-git add requirements.txt .gitignore .env.example README.md CLAUDE.md
-git add .claude/commands/kintai-daily.md .claude/commands/kintai-monthly.md
-git commit -m "feat: バクラク×Slack勤怠突合システム 初期実装
-
-- approve_daily.py: 日次申請自動承認（/kintai-daily）
-- approve_monthly.py: 月次申請自動承認
-- reconcile.py: バクラク×Slack突合 → HTMLレポート → 月次承認
-- intern_config.py: インターン生Slack IDマッピング
-- .claude/commands/: /kintai-daily / /kintai-monthly スラッシュコマンド"
-```
-
-### Step 3: GitHub private リポジトリ作成・push
-
-```bash
-gh repo create kintai-check --private --source=. --push
-```
-
-→ URL が返ってくる（例: `https://github.com/osamu-morishima/kintai-check`）
-
-### Step 4: 他の担当者をコラボレーターに追加
-
-```bash
-gh api repos/osamu-morishima/kintai-check/collaborators/sakusa-username -X PUT -f permission=pull
-gh api repos/osamu-morishima/kintai-check/collaborators/kunihiro-username -X PUT -f permission=pull
-gh api repos/osamu-morishima/kintai-check/collaborators/ishihara-username -X PUT -f permission=pull
-# username は各人の GitHub アカウント名に置き換え
-```
-
-### Step 5: 他の担当者のセットアップ手順（共有する内容）
-
-```bash
-# 1. リポジトリをクローン
-git clone https://github.com/osamu-morishima/kintai-check.git
-cd kintai-check
-
-# 2. customer-dashboard の .venv があることを確認
-ls ../customer-dashboard/.venv/bin/python3
-
-# 3. SLACK_BOT_TOKEN を設定（customer-dashboard/.env になければ）
-cp .env.example .env
-# .env を開いて SLACK_BOT_TOKEN を貼り付け
-
-# 4. 初回ログイン
-../customer-dashboard/.venv/bin/python3 approve_daily.py
-# → ブラウザが開くので Google アカウントでログイン
-
-# 5. Claude Code でこのディレクトリを開く
-claude
-# → /kintai-daily または /kintai-monthly を実行
-```
-
-### 残タスク（PR 前に完了が必要なもの）
-
-- [ ] `reconcile.py` 実機テスト: 月次申請が来たら `/kintai-monthly` で実行確認
-- [ ] 他の担当者の GitHub ユーザー名を確認（コラボレーター追加に必要）
+https://github.com/osamumorishima/kintai-check（公開）
