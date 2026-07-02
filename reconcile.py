@@ -143,7 +143,7 @@ def discover_members(page, slack_id_map):
     members = []
     for name, slack_id in slack_id_map.items():
         try:
-            el = page.locator(f"text={name}").first
+            el = page.get_by_text(name, exact=False).first
             if not el:
                 continue
             el.click()
