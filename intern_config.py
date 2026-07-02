@@ -9,8 +9,21 @@ Slack UID は起動時に自動取得します。
 import re, os
 
 # 担当インターン生の姓リスト（.env の INTERN_NAMES から読み込む）
-# 例: INTERN_NAMES=福田,上野
-INTERN_NAMES = [n.strip() for n in os.getenv("INTERN_NAMES", "").split(",") if n.strip()]
+# 形式: バクラク表示名:Slack検索キー（カンマ区切り）
+# 例: INTERN_NAMES=福田:Fukuta,上野:Ueno
+# Slack名が日本語の場合は コロンなし: INTERN_NAMES=福田,上野
+_raw_names = [n.strip() for n in os.getenv("INTERN_NAMES", "").split(",") if n.strip()]
+INTERN_NAMES = []          # バクラク上の名前（Playwright text検索に使用）
+INTERN_SLACK_NAMES = {}    # {バクラク名: Slack検索キー}
+
+for _entry in _raw_names:
+    if ":" in _entry:
+        _bk, _slack = _entry.split(":", 1)
+        _bk, _slack = _bk.strip(), _slack.strip()
+    else:
+        _bk = _slack = _entry
+    INTERN_NAMES.append(_bk)
+    INTERN_SLACK_NAMES[_bk] = _slack
 
 # 打刻キーワード正規表現（RE_BREAK を先に評価すること）
 RE_BREAK = re.compile(r"いちぬけ|なかぬけ|一旦退勤", re.IGNORECASE)

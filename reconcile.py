@@ -27,7 +27,7 @@ load_dotenv(_here.parent / "customer-dashboard" / ".env")
 load_dotenv(_here / ".env", override=False)
 
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
-from intern_config import INTERN_NAMES, RE_IN, RE_OUT, RE_BREAK, RE_BACK, PUNCH_CHANNEL_NAME, TOLERANCE_MIN
+from intern_config import INTERN_NAMES, INTERN_SLACK_NAMES, RE_IN, RE_OUT, RE_BREAK, RE_BACK, PUNCH_CHANNEL_NAME, TOLERANCE_MIN
 
 JST = timezone(timedelta(hours=9))
 PROFILE_DIR   = _here / "browser_profile"
@@ -81,6 +81,8 @@ def resolve_slack_ids(names):
 
     result = {}
     for name in names:
+        # バクラク名→Slackキーに変換（ローマ字対応、大文字小文字吸収）
+        slack_key = INTERN_SLACK_NAMES.get(name, name)
         matches = []
         for u in real_users:
             profile = u.get("profile", {})
@@ -90,7 +92,7 @@ def resolve_slack_ids(names):
                 profile.get("display_name_normalized", ""),
                 profile.get("real_name_normalized", ""),
             ]
-            if any(name in cn for cn in candidate_names):
+            if any(slack_key.lower() in cn.lower() for cn in candidate_names):
                 matches.append(u)
 
         if len(matches) == 1:
