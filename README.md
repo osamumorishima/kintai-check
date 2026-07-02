@@ -4,7 +4,7 @@
 
 ---
 
-## 全体フロー
+## 毎月の運用フロー
 
 ```
 ① インターン生が日次申請を提出
@@ -15,86 +15,109 @@
     ↓
 ④ インターン生が月次申請を提出
     ↓
-⑤ 担当者が /kintai-monthly を実行
-    → Slack打刻 × バクラク出退勤を突合
-    → 全一致: 月次申請を自動承認
-    → 不一致: HTMLレポートを確認 →「問題なし」と返答 → 承認
+⑤ 担当者が /kintai-monthly を実行 → 突合・月次承認
 ```
-
----
-
-## セットアップ（初回のみ）
-
-### 1. リポジトリをクローン
-
-```bash
-git clone https://github.com/osamumorishima/kintai-check.git
-cd kintai-check
-```
-
-### 2. .env を作成
-
-```bash
-cp .env.example .env
-```
-
-`.env` を開いて以下を設定する。
-
-```
-# 担当インターン生の姓（カンマ区切り）
-INTERN_NAMES=福田,上野
-
-# Slack Bot Token（customer-dashboard/.env に設定済みなら不要）
-SLACK_BOT_TOKEN=xoxb-...
-```
-
-> `INTERN_NAMES` は自分が担当するインターン生の姓のみ記載する。
-
-### 3. バクラクに初回ログイン
-
-```bash
-../customer-dashboard/.venv/bin/python3 approve_daily.py
-```
-
-ブラウザが開くので Google アカウントでログインする。以降は自動復元されるため再ログイン不要。
-
-### 4. Claude Code でこのディレクトリを開く
-
-```bash
-claude
-```
-
----
-
-## 使い方
-
-### 日次申請が届いたとき
-
-```
-/kintai-daily
-```
-
-### 月次申請・突合（W承認完了後）
-
-```
-/kintai-monthly
-```
-
-実行すると担当インターン生の Slack ID を自動取得し、バクラクと突合する。
-
-- **全一致** → 月次承認まで自動で完了
-- **不一致あり** → HTMLレポートのリンクが表示される。内容を確認して「問題なし」と返答すると承認に進む
 
 ---
 
 ## 担当者 → インターン生 対応表
 
-| 担当者 | INTERN_NAMES に設定する値 |
+| 担当者 | 担当インターン生 |
 |---|---|
-| 森島 | `福田,上野` |
-| 佐草 | `御園,兵庫` |
-| 国広 | `廣嶋` |
-| 石原 | `西口` |
+| 森島 | 福田・上野 |
+| 佐草 | 御園・兵庫 |
+| 国広 | 廣嶋 |
+| 石原 | 西口 |
+
+---
+
+## セットアップ（初回のみ）
+
+### ステップ 1｜ファイルをダウンロードする
+
+Mac の **Terminal.app**（アプリケーション → ユーティリティ → ターミナル）を開き、以下を実行する。
+
+```bash
+cd ~/Documents
+git clone https://github.com/osamumorishima/kintai-check.git
+cd kintai-check
+```
+
+### ステップ 2｜担当インターン生と Slack Token を設定する
+
+以下のコマンドで設定ファイルを作成する。
+
+```bash
+cp .env.example .env
+open -e .env
+```
+
+テキストエディットが開くので、以下の2行を自分の情報に書き換えて保存する。
+
+```
+INTERN_NAMES=福田,上野        ← 担当インターン生の姓をカンマ区切りで記入
+SLACK_BOT_TOKEN=xoxb-...     ← 森島から共有されたトークンを貼り付け
+```
+
+> `INTERN_NAMES` の記入例：佐草さんの場合は `御園,兵庫`、国広さんは `廣嶋`、石原さんは `西口`
+
+### ステップ 3｜バクラクに初回ログインする
+
+Terminal.app で以下を実行する。
+
+```bash
+../customer-dashboard/.venv/bin/python3 approve_daily.py
+```
+
+ブラウザが自動で開くので、バクラクで使っている **Google アカウントでログイン** する。ログイン後はブラウザを閉じてよい。次回以降は自動でログイン状態が復元されるため、この手順は不要。
+
+### ステップ 4｜Claude Code でこのフォルダを開く
+
+Terminal.app で以下を実行する。
+
+```bash
+cd ~/Documents/kintai-check
+claude
+```
+
+Claude Code が起動したら準備完了。次回以降はこのコマンドだけで使える。
+
+---
+
+## 使い方
+
+### 日次申請が届いたとき → `/kintai-daily`
+
+Claude Code の入力欄に以下を入力して Enter を押す。
+
+```
+/kintai-daily
+```
+
+バクラクが自動で開き、申請を承認して閉じる。
+
+---
+
+### 月次申請・突合（W承認完了後）→ `/kintai-monthly`
+
+上妻・柳原（経理）のW承認が完了したら、Claude Code の入力欄に以下を入力して Enter を押す。
+
+```
+/kintai-monthly
+```
+
+自動で以下を実行する。
+
+1. 担当インターン生の Slack ID を自動取得（名前の確認あり）
+2. バクラクの出退勤データを取得
+3. Slack の打刻データと突合
+4. **全一致の場合** → 月次承認まで自動完了。終了メッセージが出る
+5. **不一致がある場合** → HTMLレポートのリンクが表示される
+
+**不一致があった場合：**
+- 表示されたリンクをブラウザで開いてレポートを確認する
+- 問題なければ Claude Code に「問題なし」と入力する
+- 承認が自動で実行される
 
 ---
 
@@ -102,8 +125,8 @@ claude
 
 | 症状 | 対処 |
 |---|---|
-| 「未ログイン」と表示される | ブラウザが開くのでGoogleアカウントでログイン |
-| ログイン後も「未ログイン」になる | `browser_profile/` を削除して再実行 |
-| `INTERN_NAMES が未設定` と表示される | `.env` に `INTERN_NAMES=姓,姓` を追記 |
-| Slack IDが見つからない | `.env` の `INTERN_NAMES` の表記をSlackの表示名に合わせる |
-| SLACK_BOT_TOKEN エラー | `.env` に `SLACK_BOT_TOKEN` を設定 |
+| 「未ログイン」と表示される | ブラウザが開くのでバクラクのGoogleアカウントでログイン |
+| ログイン後も「未ログイン」になる | `browser_profile/` フォルダを削除して再実行 |
+| `INTERN_NAMES が未設定` と表示される | `.env` を開いて `INTERN_NAMES=姓,姓` を追記して保存 |
+| Slack ID が見つからない | `.env` の `INTERN_NAMES` の表記をSlackの表示名に合わせる |
+| SLACK_BOT_TOKEN エラー | `.env` に `SLACK_BOT_TOKEN` を設定（森島に確認） |
