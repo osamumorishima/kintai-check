@@ -143,9 +143,12 @@ def discover_members(page, slack_id_map):
     members = []
     for name, slack_id in slack_id_map.items():
         try:
-            el = page.get_by_text(name, exact=False).first
-            if not el:
-                continue
+            # daily_works へのリンクに限定して検索（ナビバーに同姓管理者名がある場合を除外）
+            link_sel = page.locator(f"a[href*='/manager/daily_works/']:has-text('{name}')")
+            if link_sel.count() > 0:
+                el = link_sel.first
+            else:
+                el = page.get_by_text(name, exact=False).first
             el.click()
             time.sleep(2)
             url = page.url
